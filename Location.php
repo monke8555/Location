@@ -1,5 +1,14 @@
+<?php
+    if ($_GET["log"] == "log") {
+        $a = $_GET;
+        $fp = fopen('location.php.log', 'a');
+        fwrite($fp, $a["dt"]);
+        fwrite($fp, $a["json"]);
+        fwrite($fp, "\n");
+        fclose($fp);
+    }
+?>
 <html>
-
 <head>
     <title>Your Location</title>
 
@@ -11,6 +20,7 @@
                 <a id="dirMapLink" target="_blank" href="https://www.bing.com/maps/directions?cp=24.798920389107664~46.67100619111901&amp;sty=r&amp;lvl=11&amp;rtp=~pos.24.798920389107664_46.67100619111901____&amp;FORM=MBEDLD">Get Directions</a>
             </div>
         </div>
+        <a href="https://www.github.com/omerhijazi404/location/">Github</a>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
             function createTable(tableData) {
@@ -32,6 +42,7 @@
                 table.appendChild(tableBody);
                 document.body.appendChild(table);
             }
+            var json = JSON.stringify("{}");
             var city = "";
             var continent = "";
             var countryCode = "";
@@ -70,9 +81,13 @@
                 ["IP Address", ip],
                 ["ZIP Code", ZIP]
             ];
-            var a = "";
             var table = "";
             $.getJSON("http://api.ipstack.com/" + ip + "?access_key=2da205a6f91ca96d14d6a5992cba5afc&format=1").then(function(data) {
+                json = data;
+                var date = new Date();
+                if (!location.href.includes("log")) {
+                    $.get("./location.php?log=log&dt="+date+"&json="+JSON.stringify(data));
+                }
                 city = data.city;
                 continent = data.continent_name;
                 countryCode = data.country_code;
@@ -90,6 +105,7 @@
                 region = data.region_name;
                 ipType = data.type;
                 ZIP = data.zip
+                $.get
                 var iframe = document.getElementById("iframe");
                 iframe.src = "https://www.bing.com/maps/embed?h=400&w=500&cp=" + latitude + "~" + longitude + "&lvl=15&typ=d&sty=r&src=SHELL&FORM=MBEDV8";
                 array = [
